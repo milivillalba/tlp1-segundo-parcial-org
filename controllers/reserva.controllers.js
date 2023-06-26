@@ -13,12 +13,11 @@ const ctrlReservas = {};
 // Eliminar una reserva de forma lógica
 
 // Ctrl para obtener todas las reservas
-ctrlReservas.obtenerReserva = async (req, res) => {
+ctrlReservas.obtenerReservas = async (req, res) => {
   try {
     const Reserva = await reserva.findAll({
       where: {
-        nombre_y_apellido: req.Reserva.nombre_y_apellido,
-        usuarioId: req.usuario.id,
+        estado: 1,
       },
     });
 
@@ -44,15 +43,14 @@ ctrlReservas.obtenerReserva = async (req, res) => {
   try {
     const Reserva = await reserva.findOne({
       where: {
-        id,
-        nombre_y_apellido: req.Reserva.nombre_y_apellido,
+        id: id,
       },
     });
 
-    if (!Reserva) {
+    if (!personas) {
       throw {
         status: 404,
-        message: "No existe la reserva",
+        message: "No existe la personas",
       };
     }
 
@@ -66,13 +64,16 @@ ctrlReservas.obtenerReserva = async (req, res) => {
 
 // Ctrl para crear una Reserva
 ctrlReservas.crearReserva = async (req, res) => {
-  const { nombre_y_apellido, lugar_Viaje } = req.body;
+  const { id, nombre_y_apellido, email, lugar_Viaje, fecha, estado } = req.body;
 
   try {
     const Reserva = await reserva.create({
+      id,
       nombre_y_apellido,
+      email,
       lugar_Viaje,
-      usuarioId: req.usuario.id,
+      fecha,
+      estado,
     });
 
     if (!Reserva) {
@@ -94,18 +95,17 @@ ctrlReservas.crearReserva = async (req, res) => {
 // Ctrl para actualizar una reserva
 ctrlReservas.actualizarReserva = async (req, res) => {
   const { id } = req.params;
-  const { nombre_y_apellido, lugar_Viaje } = req.body;
+  const { email, lugar_Viaje } = req.body;
 
   try {
     const reservaActualizada = await reserva.update(
       {
-        nombre_y_apellido,
+        email,
         lugar_Viaje,
       },
       {
         where: {
           id,
-          nombre_y_apellido: req.Reserva.nombre_y_apellido,
         },
       }
     );
@@ -135,12 +135,12 @@ ctrlReservas.eliminarReserva = async (req, res) => {
   try {
     const reservaEliminada = await reserva.update(
       {
-        nombre_y_apellido: req.Reserva.nombre_y_apellido,
+        estado: false,
       },
       {
         where: {
           id,
-          nombre_y_apellido: req.Reserva.nombre_y_apellido,
+          estado: true,
         },
       }
     );

@@ -15,20 +15,22 @@ const {
 // ==========================================
 
 // Obtener todas las reservas
+// router.get("/usuaris", () => {
+//   console.log("holi mili");
+// });
 
-router.get("/reservas", (req, res) => {
-  res.render("reserva/index");
+router.get("/", (req, res) => {
+  res.render("index");
 });
 
 // Formulario para crear una reserva
-router.get("/reserva/editar/:id", (req, res) => {
-  const tareaId = req.params.id;
-  res.render("reserva/editar_reserva", { id: reservaId });
+router.get("/crear/resrva", (req, res) => {
+  res.render("crear_reserva");
 });
 
 // Formulario para actualizar una reserva
-router.get("/reserva/crear", (req, res) => {
-  res.render("reserva/crear_reserva");
+router.get("/reserva/editar/:id", (req, res) => {
+  res.render("editar_reserva", { id: req.params.id });
 });
 // ==========================================
 //         Rutas para CRUD de reservas
@@ -36,6 +38,9 @@ router.get("/reserva/crear", (req, res) => {
 
 // Obtener todas las reservas
 router.get("/api/reserva", obtenerReservas);
+
+//Obtener una reserva
+router.get("/api/reserva/:id", obtenerReserva);
 
 // Crear una reserva
 router.post("/api/reserva/:id", crearReserva);

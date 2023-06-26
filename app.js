@@ -4,9 +4,13 @@ const cors = require("cors");
 const morgan = require("morgan");
 const helmet = require("helmet");
 const path = require("path");
+const dotenv = require("dotenv");
+
+dotenv.config();
 // Si no existe el archivo .env, el valor por defecto del puerto será 6000
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || 3000;
 require("ejs");
+const miRuta = require("./routes/reserva.routes");
 
 const app = express();
 
@@ -19,6 +23,8 @@ app.use(cors());
 app.use(morgan("dev"));
 app.use(helmet());
 app.use(express.json());
+// Routes
+app.use("/api", miRuta);
 
 // Se importa la instancia de conexión a la base de datos - (debe ser después de leer las variables de entorno)
 const { sequelize } = require("./db");
@@ -32,9 +38,6 @@ sequelize
 
 // Archivos estáticos
 app.use(express.static(path.join(__dirname, "public")));
-
-// Routes
-app.use("/api", require("./routes/reserva.routes"));
 
 // TODO: Si la petición no coincide con ninguna de las rutas declaradas, mostrar error 404
 app.use((req, res, next) => {
