@@ -5,22 +5,98 @@
     <h1 class="text-center border-botton">Lista de Reservas</h1>
     <div class="col">
       <div class="col-md-3 mb-2">
-        <a href="/reserva/crear" class="btn btn sm btn-primary" id>Nuevo </a>
-        <a href="/" class="btn btn-info text-light">Inicio</a>
+        <a href="/crear/reserva" class="btn btn sm btn-primary" id>Nuevo </a>
       </div>
       <table class="table">
         <thead>
           <tr>
-            <th>Columna 1</th>
-            <th>Columna 2</th>
-            <th>Columna 3</th>
-            <th>Columna n</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Codigo reserva</th>
+            <th>Fecha reserva</th>
+            <th colspan="2">Funciones</th>
           </tr>
         </thead>
-        <tbody id=""></tbody>
+        <tbody id="listadoReservas"></tbody>
       </table>
     </div>
   </div>
 </div>
+
+<script>
+  const listadoReservas = document.querySelector("#listadoReservas");
+
+  const obtenerReservas = async () => {
+    const res = await fetch("http://localhost:3000/api/reserva");
+
+    if (res.status === 404) {
+      return [];
+    }
+
+    const data = await res.json();
+    return data;
+  };
+
+  const eliminarReserva = async (event) => {
+    const id = event.target.dataset.id;
+
+    try {
+      const res = await fetch(`http://localhost:3000/api/reserva/${id}`, {
+        method: "DELETE",
+      });
+
+      const data = await res.json();
+
+      console.log(data);
+
+      alert(data.message);
+      window.location.reload();
+    } catch (error) {
+      console.log(error);
+      alert(error.message);
+    }
+  };
+
+  const mostrarReservas = (Reservas) => {
+    if (!Reservas || Reservas.length === 0) {
+      listadoReservas.innerHTML += `
+              <tr>
+                  <td colspan="3">No hay tareas</td>
+              </tr>
+          `;
+      return;
+    }
+
+    Reservas.forEach((Reserva) => {
+      listadoReservas.innerHTML += `
+        <tr>
+        <td>${Reserva.nombre}</td>
+        <td>${Reserva.apellido}</td>
+        <td>${Reserva.cod_reserva}</td>
+        <td>${Reserva.fecha_reserva}</td>
+        <td>
+            <button onclick=eliminarReserva(event) class="btn btn-danger btn-sm" data-id="${Reserva.id}">Eliminar</button>
+            <a href="/Reserva/editar/${Reserva.id}" class="btn btn-warning btn-sm">Editar</a>
+        </td>
+    </tr>
+    `;
+    });
+  };
+
+  // Obtener las tareas automáticamente cuando se carga la página
+  document.addEventListener("DOMContentLoaded", async () => {
+    console.log("DOM cargado");
+
+    // Dentro de try se coloca el código que se quiere ejecutar
+    try {
+      const Reservas = await obtenerReservas();
+
+      mostrarReservas(Reservas);
+    } catch (error) {
+      // Dentro de catch se coloca el código que se ejecutará en caso de que haya un error
+      console.log({ error });
+    }
+  });
+</script>
 
 <%- include('partials/footer') %>
